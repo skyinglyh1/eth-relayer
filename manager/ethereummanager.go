@@ -399,13 +399,13 @@ func (this *EthereumManager) MonitorDeposit() {
 			}
 			snycheight := this.findLastestHeight()
 			log.Log.Info("MonitorDeposit from eth - snyced eth height", snycheight, "eth height", height, "diff", height-snycheight)
-			this.handleLockDepositEvents(snycheight)
+			this.handleLockDepositEvents(snycheight, height)
 		case <-this.exitChan:
 			return
 		}
 	}
 }
-func (this *EthereumManager) handleLockDepositEvents(refHeight uint64) error {
+func (this *EthereumManager) handleLockDepositEvents(refHeight uint64, ethLatestRealHeight uint64) error {
 	retryList, err := this.db.GetAllRetry()
 	if err != nil {
 		return fmt.Errorf("handleLockDepositEvents - this.db.GetAllRetry error: %s", err)
@@ -428,7 +428,7 @@ func (this *EthereumManager) handleLockDepositEvents(refHeight uint64) error {
 		if refHeight <= crosstx.height+this.config.ETHConfig.BlockConfig {
 			continue
 		}
-		height := int64(refHeight - this.config.ETHConfig.BlockConfig)
+		height := int64(ethLatestRealHeight - this.config.ETHConfig.BlockConfig)
 		heightHex := hexutil.EncodeBig(big.NewInt(height))
 		proofKey := hexutil.Encode(keyBytes)
 		//2. get proof

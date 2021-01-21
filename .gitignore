@@ -10,3 +10,6 @@ UTC--*
 *_test.go
 config-main.json
 config-debug-dev.json
+config_*.json
+/Log/
+eth_relayer
